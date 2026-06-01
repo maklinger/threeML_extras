@@ -85,8 +85,17 @@ class EFELike(XYLike):
         self._nuisance_parameter.value = value
         self._nuisance_parameter.fix = True
 
-    def add2ax_SED_eV_ergscm2(self, ax, color="k", **kwargs):
-        """Plot E [eV] vs EFE [erg/cm²/s] onto ax."""
-        ax.errorbar(self._x * 1e3, self._y, yerr=self._yerr,
-                    ls="", marker=".", c=color, **kwargs)
+    def add2ax_SED_eV_ergscm2(self, ax, color="k", 
+                              plot_effective_area_correction=False, **kwargs):
+        """Plot using the original df columns directly. 
+            plot_effective_area_correction is only rescaling data and uncertainty,
+            but not propagating the uncertainties from the eff. area corr.
+        """
+        effarcorr = 1
+        if plot_effective_area_correction:
+            effarcorr = self._nuisance_parameter.value
+        ax.errorbar(
+            self._x * 1e3, effarcorr * self._y, yerr=effarcorr * self._yerr,
+            ls="", marker=".", c=color, **kwargs,
+        )
         return ax
