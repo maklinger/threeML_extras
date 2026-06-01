@@ -443,7 +443,7 @@ class CornerPlotter:
                 legend_handles += [
                     mlines.Line2D(
                         [], [], linestyle="--", color=eti_color,
-                        label=r"1$\sigma$ (ETI)",
+                        label=r"1$\sigma$ (quantiles)",
                     ),
                 ]
             if hpd_span:
