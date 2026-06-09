@@ -45,7 +45,8 @@ class EFELike(XYLike):
         1-sigma uncertainties in erg/cm²/s.
     """
 
-    def __init__(self, name, x_keV, y_efe, y_unc):
+    def __init__(self, name, x_keV, y_efe, y_unc, systematic_fraction=0.0):
+        self._systematic_fraction = systematic_fraction
         self._x_erg = np.asarray(x_keV) * keV2erg
         super().__init__(name, x=x_keV, y=y_efe, yerr=y_unc)
 
@@ -65,10 +66,12 @@ class EFELike(XYLike):
         )
 
     def get_log_like(self):
+        y_eff = self._y[self._mask]
+        yerr_eff = np.sqrt(self._yerr[self._mask]**2 + (self._systematic_fraction * y_eff)**2)
         expectation = (self._x_erg * self._x * self._get_total_expectation())[self._mask]
         c = self._nuisance_parameter.value
-        return _chi2_like(c * self._y[self._mask], c * self._yerr[self._mask], expectation)
-
+        return _chi2_like(c * y_eff, c * yerr_eff, expectation)
+    
     def use_effective_area_correction(self, 
                                       min_value: Union[int, float] = 0.8,
                                       max_value: Union[int, float] = 1.2) -> None:
