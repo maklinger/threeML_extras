@@ -142,6 +142,7 @@ class SherpaPileupLike(PluginPrototype):
         shp.notice_id(sid, e_lo_keV, e_hi_keV)
 
         # ── Sherpa statistic ──────────────────────────────────────────────────
+        self._stat = stat
         shp.set_stat(stat)
 
         # ── Build the JDPileup model ──────────────────────────────────────────
